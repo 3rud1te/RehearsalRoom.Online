@@ -74,7 +74,7 @@
 <body>
 
     <h2>🎶 Live Rehearsal Rooms</h2>
-    <div id="rooms">Loading room data...</div>
+    <div id="rooms">Checking server status...</div>
 
     <script>
         async function fetchJamulusRooms() {
@@ -82,8 +82,12 @@
                 // Replace with your actual Jamulus server IP or domain
                 const serverStatusUrl = "http://your-server-ip:22124";  
                 const response = await fetch(serverStatusUrl);
-                const data = await response.json();
 
+                if (!response.ok) {
+                    throw new Error("Server offline or unreachable");
+                }
+
+                const data = await response.json();
                 let roomsHtml = "";
                 let activeRooms = new Map();
 
@@ -107,11 +111,11 @@
                     `;
                 });
 
-                document.getElementById("rooms").innerHTML = roomsHtml || "<p>No active rooms.</p>";
+                document.getElementById("rooms").innerHTML = roomsHtml || "<p>No active rooms at the moment.</p>";
                 showRooms(); // Trigger animations
 
             } catch (error) {
-                document.getElementById("rooms").innerHTML = "<p>Error fetching room data.</p>";
+                document.getElementById("rooms").innerHTML = "<p>No active rooms at the moment.</p>";
                 console.error("Jamulus fetch error:", error);
             }
         }
@@ -128,3 +132,4 @@
 
 </body>
 </html>
+
