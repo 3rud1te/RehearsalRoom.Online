@@ -1,80 +1,130 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehearsal Rooms | Live Status</title>
+    <style>
+        /* Dark Theme Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        #rooms {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .room {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .room.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .room h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #00bcd4;
+        }
+
+        .room p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .join-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #00bcd4;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .join-btn:hover {
+            background: #008c9e;
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Rehearsal Room Status&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: Arial, sans-serif; text-align: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>h2 { color: #333; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#rooms { margin-top: 20px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.room { padding: 10px; border: 1px solid #ccc; margin: 10px; display: inline-block; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.join-btn { display: block; margin-top: 10px; background: #28a745; color: white; padding: 8px 12px; text-decoration: none; border-radius: 5px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.join-btn:hover { background: #218838; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Rehearsal Rooms - Live Status&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="rooms"&gt;Loading room data...&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>async function fetchJamulusRooms() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Replace with your actual server IP or domain</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const serverStatusUrl = "http://your-server-ip:22124"; <span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">                </span>const response = await fetch(serverStatusUrl);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const data = await response.json();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>let roomsHtml = "";</p>
-<p class="p1"><span class="Apple-converted-space">                </span>let activeRooms = new Map();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Group users into "rooms" based on their port</p>
-<p class="p1"><span class="Apple-converted-space">                </span>data.clients.forEach(client =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (!activeRooms.has(client.port)) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>activeRooms.set(client.port, []);</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>activeRooms.get(client.port).push(client.name);</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>// Generate room HTML</p>
-<p class="p1"><span class="Apple-converted-space">                </span>activeRooms.forEach((users, port) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>roomsHtml += `</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="room"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;h3&gt;Room on Port ${port}&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p&gt;Currently ${users.length} musicians online.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;ul&gt;${users.map(user =&gt; `&lt;li&gt;${user}&lt;/li&gt;`).join("")}&lt;/ul&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>&lt;a href="jamulus://your-server-ip:${port}" class="join-btn"&gt;Join Room&lt;/a&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("rooms").innerHTML = roomsHtml || "&lt;p&gt;No active rooms.&lt;/p&gt;";</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById("rooms").innerHTML = "&lt;p&gt;Error fetching room data.&lt;/p&gt;";</p>
-<p class="p1"><span class="Apple-converted-space">                </span>console.error("Jamulus fetch error:", error);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>fetchJamulusRooms();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>setInterval(fetchJamulusRooms, 10000); // Refresh every 10 seconds</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+    <h2>🎶 Live Rehearsal Rooms</h2>
+    <div id="rooms">Loading room data...</div>
+
+    <script>
+        async function fetchJamulusRooms() {
+            try {
+                // Replace with your actual Jamulus server IP or domain
+                const serverStatusUrl = "http://your-server-ip:22124";  
+                const response = await fetch(serverStatusUrl);
+                const data = await response.json();
+
+                let roomsHtml = "";
+                let activeRooms = new Map();
+
+                // Group users into "rooms" based on their port
+                data.clients.forEach(client => {
+                    if (!activeRooms.has(client.port)) {
+                        activeRooms.set(client.port, []);
+                    }
+                    activeRooms.get(client.port).push(client.name);
+                });
+
+                // Generate room HTML
+                activeRooms.forEach((users, port) => {
+                    roomsHtml += `
+                        <div class="room">
+                            <h3>🎵 Room on Port ${port}</h3>
+                            <p>👥 ${users.length} musicians online</p>
+                            <ul>${users.map(user => `<li>${user}</li>`).join("")}</ul>
+                            <a href="jamulus://your-server-ip:${port}" class="join-btn">Join Room</a>
+                        </div>
+                    `;
+                });
+
+                document.getElementById("rooms").innerHTML = roomsHtml || "<p>No active rooms.</p>";
+                showRooms(); // Trigger animations
+
+            } catch (error) {
+                document.getElementById("rooms").innerHTML = "<p>Error fetching room data.</p>";
+                console.error("Jamulus fetch error:", error);
+            }
+        }
+
+        function showRooms() {
+            document.querySelectorAll('.room').forEach((room, index) => {
+                setTimeout(() => room.classList.add('show'), index * 200); // Staggered animation
+            });
+        }
+
+        fetchJamulusRooms();
+        setInterval(fetchJamulusRooms, 10000); // Refresh every 10 seconds
+    </script>
+
 </body>
 </html>
